@@ -1,0 +1,167 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Stack integration testing ApplicationStack synthesizes the way we expect 1`] = `
+{
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "ApplicationFunction4738106C": {
+      "DependsOn": [
+        "ApplicationFunctionRole516B4A4D",
+      ],
+      "Properties": {
+        "Architectures": [
+          "arm64",
+        ],
+        "Code": {
+          "ZipFile": "import os
+
+def handler(event, context):
+    return { 'bucket': os.environ['BUCKET_NAME'] }",
+        },
+        "Environment": {
+          "Variables": {
+            "BUCKET_NAME": {
+              "Fn::ImportValue": "TestS3:ExportsOutputRefPublicUserUploadedFilesBucket4FF12C1B9072A75C",
+            },
+          },
+        },
+        "FunctionName": "test-application",
+        "Handler": "index.handler",
+        "MemorySize": 1024,
+        "Role": {
+          "Fn::GetAtt": [
+            "ApplicationFunctionRole516B4A4D",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.12",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "ApplicationFunctionRole516B4A4D": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+        "RoleName": "test-application-function-role",
+      },
+      "Type": "AWS::IAM::Role",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;
+
+exports[`Stack integration testing S3Stack synthesizes the way we expect 1`] = `
+{
+  "Outputs": {
+    "ExportsOutputRefPublicUserUploadedFilesBucket4FF12C1B9072A75C": {
+      "Export": {
+        "Name": "TestS3:ExportsOutputRefPublicUserUploadedFilesBucket4FF12C1B9072A75C",
+      },
+      "Value": {
+        "Ref": "PublicUserUploadedFilesBucket4FF12C1B",
+      },
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "PublicUserUploadedFilesBucket4FF12C1B": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "BucketName": "test-public-user-uploaded-files",
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;
